@@ -2,7 +2,7 @@
 
 ## Sobre o projeto
 
-Marginalia é uma plataforma de leitura social com IA. Os usuários leem livros e textos, selecionam trechos, e podem:
+Marginalia é uma plataforma de interação entre leitores. Os usuários acesam livros e textos, selecionam trechos, e podem:
 
 - Deixar anotações públicas sobre aquele trecho, visíveis para outros leitores
 - Fazer perguntas a uma IA sobre o trecho selecionado (contexto delimitado, não o livro inteiro)
