@@ -1,39 +1,46 @@
+require('dotenv').config();
 const userModel = require("../models/User");
+const jwt = require("jsonwebtoken");
 
-class userController{
+class userController {
 
-    async register(req,res){
+    async register(req, res, next) {
         try {
+            const { name, email, password } = req.body;
 
-            const {name,email,password} = req.body;
+            const newUser = await userModel.register(name, email, password);
 
-            const newUser = await userModel.register(name,email,password);
-
-            res.status(200).json(newUser);
+            return res.status(201).json(newUser);
         } catch (error) {
-            console.error("Erro no userController:", error);
-            const status = error.status || 500;
-            return res.status(status).json({ erro: error.message || "Erro interno ao registrar usuário." });
-
-        }
-    }
-
-    async login(req,res){
-
-        try {
-            const {email,password}= req.body;
-
-            const user = await userModel.login(email,password);
-
-            res.status(200).json(user);
-        } catch (error) {
-            console.error("Erro no userController:", error);
-            const status = error.status || 500;
-            return res.status(status).json({ erro: error.message || "Erro interno ao realizar login." });
+            
+            next(error);
         }
     }
 
 
+    async login(req, res, next) {
+        try {
+            const { email, password } = req.body;
+
+            const user = await userModel.login(email, password);
+            
+            const token = jwt.sign(
+                {}, 
+                process.env.JWT_SECRET, 
+                { 
+                    subject: String(user.id), 
+                    expiresIn: '1d' 
+                }
+            );
+            
+            return res.status(200).json({
+                user,
+                token
+            });
+        } catch (error) {
+            next(error); 
+        }
+    }
 }
 
 module.exports = new userController();
