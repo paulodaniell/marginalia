@@ -7,9 +7,13 @@ app.use(express.json());
 
 const userRoutes = require('./routes/user-routes');
 const bookRoutes = require('./routes/book-routes');
+const excerptsRoutes = require('./routes/excerpts-routes');
 
-app.use('/api/users', userRoutes);
+
+app.use('/api/users',userRoutes);
 app.use('/api/books',bookRoutes);
+
+app.use('/api/excerpts',excerptsRoutes);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');

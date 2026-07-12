@@ -5,7 +5,6 @@ const AppError = require('../utils/AppError');
 class User {
 
     static async register(name, email, password) {
-        try {
             const saltRounds = 10;
             const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -18,14 +17,12 @@ class User {
                 email
             };
 
-        } catch (error) {
-            throw error; 
-        }
+        
     }
 
     static async login(email, userPassword) {
         try {
-            const sql = `SELECT * FROM users WHERE email = ?`
+          const sql = `SELECT id, name, email, password_hash, avatar_url FROM users WHERE email = ?`;
             const [result] = await db.execute(sql, [email]);
 
             if (result.length === 0) {
