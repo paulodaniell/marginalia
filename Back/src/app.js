@@ -19,7 +19,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-const errorHandler = require('./ middlewares/errorHandler');
+const errorHandler = require('./middlewares/errorHandler');
 app.use(errorHandler);
 
 module.exports = app;
