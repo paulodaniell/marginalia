@@ -57,6 +57,25 @@ class Book {
         }
     }
 
+    // FAZER PUT 
+
+    static async delete(id){
+        try {
+            const sql = `DELETE FROM books WHERE id = ?`;
+            const [result] = await db.execute(sql, [id]);
+
+        
+            if (result.affectedRows === 0) {
+                    throw new AppError("Livro não encontrado", 404);
+            }
+
+        return true;
+
+        } catch (error) {
+            throw error;
+        }
+    }
+
 }
 
 module.exports = Book;

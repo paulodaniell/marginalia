@@ -16,8 +16,6 @@ class bookController{
     }
 
 
-
-
     async list(req,res,next){
 
         try {
@@ -37,6 +35,17 @@ class bookController{
             const book = await bookModel.findById(id);
 
             res.status(200).json(book);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async delete(req,res,next){
+        try {
+            const {id} = req.params;
+
+            await bookModel.delete(id);
+            return res.status(200).json({ message: "Livro deletado com sucesso!!" });
         } catch (error) {
             next(error);
         }
