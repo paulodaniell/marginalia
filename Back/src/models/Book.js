@@ -8,7 +8,7 @@ class Book {
         try {
             const urlPadrao = "https:exemplo";
             const capaFinal = cover_url || urlPadrao;
-            const sql = `INSERT INTO books (title,author,cover_url) VALUES (?,?,?)`
+            const sql = `INSERT INTO books (title,author,cover_url) VALUES (?,?,?)`;
 
             const [result] = await db.execute(sql,[title,author,capaFinal]);
 
