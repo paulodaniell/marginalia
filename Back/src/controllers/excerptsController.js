@@ -31,6 +31,30 @@ class excerptsController{
             next(error);
         }
     }
+
+
+    async getByExcerpts(req,res,next){
+        try {
+            const {id} = req.params;
+            const excerpt = await excerptsModel.getByExcerpts(id);
+            res.status(200).json(excerpt);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async delete(req, res, next) {
+    try {
+        const { id } = req.params; 
+        const userId = req.usuario.id; 
+
+        await excerptsModel.delete(id, userId);
+
+        return res.status(200).json({ message: "Trecho deletado com sucesso!" });
+    } catch (error) {
+        next(error);
+    }
+}
 }
 
 module.exports = new excerptsController();

@@ -57,8 +57,6 @@ class Book {
         }
     }
 
-    // FAZER PUT 
-
     static async delete(id){
         try {
             const sql = `DELETE FROM books WHERE id = ?`;
