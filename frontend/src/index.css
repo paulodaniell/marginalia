@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+@theme {
+  --color-papel: #EFEADD;
+  --color-tinta: #23241F;
+  --color-indigo: #38477C;
+  --color-nota: #9C3B3B;
+  --color-grifo: #C99A3E;
+
+  --font-serif: "Fraunces", serif;
+  --font-sans: "IBM Plex Sans", sans-serif;
+  --font-hand: "Caveat", cursive;
+}
+
+body {
+  background-color: var(--color-papel);
+  color: var(--color-tinta);
+  font-family: var(--font-sans);
+}

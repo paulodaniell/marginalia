@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
+const cors = require("cors");
 
-
+app.use(cors());
 app.use(express.json());
 
 
@@ -20,7 +21,7 @@ app.use('/api/annotations', annotationsRoutes);
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
-
+console.log("app.js carregado");
 const errorHandler = require('./middlewares/errorHandler');
 app.use(errorHandler);
 

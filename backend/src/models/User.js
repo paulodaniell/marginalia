@@ -35,10 +35,12 @@ class User {
             if (result.length === 0) {
                 throw new AppError("Email ou Senha inválidos!", 401);
             }
-
             const user = result[0];
+            
             const isPasswordValid = await bcrypt.compare(userPassword, user.password_hash);
-
+            
+          
+            console.log("Hash:", user?.password_hash);
             if (!isPasswordValid) {
                 throw new AppError("Email ou Senha inválidos!", 401);
             }
