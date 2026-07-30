@@ -1,8 +1,11 @@
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { z } from "zod";
 import api from "../service/api";
 import Button from "../components/Button";
 import LogoImg from "../assets/marginalia-wordmark.svg";
+import { useAuth } from "../hooks/authHook";
+import { useNavigate } from "react-router-dom";
+
 
 const userSchema = z.object({
   name: z.string().min(2, { message: "Informe um nome válido" }),
@@ -15,52 +18,60 @@ const userSchema = z.object({
     .or(z.literal("")),
 });
 
-async function registerAction(previousState, formData) {
-  const data = {
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    avatar_url: formData.get("avatar_url"),
-  };
-
-  const validacao = userSchema.safeParse(data);
-
-  if (!validacao.success) {
-    return {
-      errors: validacao.error.flatten().fieldErrors,
-      success: false,
-    };
-  }
-
-  try {
-    const response = await api.post("/users/register", {
-      name: data.name,
-      email: data.email,
-      password: data.password,
-      avatar_url: data.avatar_url || undefined,
-    });
-
-    localStorage.setItem("@App:token", response.data.token);
-    return { success: true, errors: {} };
-  } catch (error) {
-    return {
-      errors: { form: error.response?.data?.message || "Erro ao tentar criar conta" },
-      success: false,
-    };
-  }
-}
-
 export default function Register() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+
+  async function registerAction(previousState, formData) {
+    const data = {
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      avatar_url: formData.get("avatar_url"),
+    };
+
+    const validacao = userSchema.safeParse(data);
+
+    if (!validacao.success) {
+      return {
+        errors: validacao.error.flatten().fieldErrors,
+        success: false,
+      };
+    }
+
+    try {
+      const response = await api.post("/users/register", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        avatar_url: data.avatar_url || undefined,
+      });
+
+      login(response.data.user, response.data.token);
+
+      return { success: true, errors: {} };
+    } catch (error) {
+      return {
+        errors: { form: error.response?.data?.message || "Erro ao tentar criar conta" },
+        success: false,
+      };
+    }
+  }
+
   const [state, formAction, isPending] = useActionState(registerAction, {
     errors: {},
     success: false,
   });
+  useEffect(()=>{
+    if(state.success){
+      navigate("/home");
+    }
+  },[state.success, navigate]);
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-papel">
       <div className="w-full max-w-sm">
         
-        {/* LOGO MARGINALIA */}
         <div className="text-center mb-8">
           <img 
             src={LogoImg} 
@@ -72,7 +83,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* CARD DO FORMULÁRIO */}
         <div className="bg-white/60 backdrop-blur-sm border border-tinta/10 rounded-2xl p-7 shadow-sm">
           <h2 className="font-serif text-2xl text-tinta font-medium mb-6 text-center">
             Criar conta

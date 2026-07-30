@@ -1,11 +1,10 @@
-import Login from "./pages/Login"; 
-import Register from "./pages/Register";
-function App() {
+import { AuthProvider } from "../src/contexts/authContext";
+import { AppRoutes } from "../src/routes/index";
+
+export default function App() {
   return (
-    <div>
-      <Login />
-    </div>
+    <AuthProvider>
+      <AppRoutes />
+    </AuthProvider>
   );
 }
-
-export default App;
