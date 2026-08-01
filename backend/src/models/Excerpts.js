@@ -35,12 +35,17 @@ class Excerpts {
 
     static async getByExcerpts(excerptId){
         try {
-            const sql = `SELECT * FROM excerpts WHERE id=?`;
-            const [rows] = await db.execute(sql,[excerptId]);
+            const sql = `
+                SELECT excerpts.*, users.name as user_name 
+                FROM excerpts 
+                JOIN users ON excerpts.submitted_by = users.id 
+                WHERE excerpts.id = ?
+            `;
+            const [rows] = await db.execute(sql, [excerptId]);
 
             if (rows.length === 0) {
-            throw new AppError("Trecho não encontrado", 404);
-        }
+                throw new AppError("Trecho não encontrado", 404);
+            }
             return rows[0];
             
         } catch (error) {

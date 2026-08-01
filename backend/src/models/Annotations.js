@@ -23,8 +23,13 @@ class Annotations {
 
     static async getByExcerptID(excerpt_id) {
         try {
-            
-            const sql = `SELECT * FROM annotations WHERE excerpt_id = ?`;
+            // Adicionado o JOIN com a tabela users para trazer o nome do autor como user_name
+            const sql = `
+                SELECT annotations.*, users.name as user_name 
+                FROM annotations 
+                JOIN users ON annotations.author_id = users.id 
+                WHERE annotations.excerpt_id = ?
+            `;
             const [rows] = await db.execute(sql, [excerpt_id]);
 
             return rows;
@@ -35,7 +40,6 @@ class Annotations {
 
     static async reply(excerpt_id, author_id, content, parent_id) {
         try {
-            
             const sql = `INSERT INTO annotations (excerpt_id, author_id, content, parent_id) VALUES (?, ?, ?, ?)`; 
             const [result] = await db.execute(sql, [excerpt_id, author_id, content, parent_id]);
             return {

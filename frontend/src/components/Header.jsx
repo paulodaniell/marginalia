@@ -42,7 +42,7 @@ export function Header() {
               Entrar
             </NavLink>
             <NavLink
-              to="/registrar"
+              to="/register"
               className="text-xs font-sans bg-indigo text-white px-4 py-2 rounded-xl font-medium hover:bg-indigo/90 transition-all shadow-sm"
             >
               Criar conta

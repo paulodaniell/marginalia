@@ -27,7 +27,6 @@ class annotationController {
             next(error);
         }
     }
-
     
     async reply(req, res, next) {
         try {
@@ -43,7 +42,6 @@ class annotationController {
         }
     }
 
-   
     async delete(req, res, next) {
         try {
             const { id } = req.params;

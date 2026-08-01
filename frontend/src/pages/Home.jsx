@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../components/Header";
+import { BookCard } from "../components/BookCard";
 import { useAuth } from "../hooks/authHook";
 import api from "../service/api";
 
@@ -8,17 +9,18 @@ export default function Home() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const [books, setBooks] = useState([]); 
-
+  const [books, setBooks] = useState([]);
+  
+  // Estados do Modal de Cadastro de Livro
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
-
+  const [newCoverUrl, setNewCoverUrl] = useState("");
 
   useEffect(() => {
     async function fetchBooks() {
       try {
-        const response = await api.get("/books"); 
+        const response = await api.get("/books");
         setBooks(response.data);
       } catch (error) {
         console.error("Erro ao carregar os livros do banco:", error);
@@ -39,16 +41,17 @@ export default function Home() {
     if (!newTitle.trim() || !newAuthor.trim()) return;
 
     try {
+      // Envia os dados para a API incluindo o link da capa (cover_url)
       const response = await api.post("/books", {
         title: newTitle,
         author: newAuthor,
+        cover_url: newCoverUrl || null,
       });
 
-      
       setBooks([response.data, ...books]);
-      
       setNewTitle("");
       setNewAuthor("");
+      setNewCoverUrl("");
       setIsModalOpen(false);
     } catch (error) {
       console.error("Erro ao salvar o livro no banco:", error);
@@ -62,13 +65,13 @@ export default function Home() {
 
       <main className="max-w-6xl mx-auto w-full p-8 mt-4">
         
-        
+        {/* Título de boas-vindas */}
         <div className="mb-8">
           <h1 className="font-serif text-3xl font-normal text-tinta mb-1">Explorar livros</h1>
           <p className="text-sm text-tinta/60">Selecione um livro para ver os trechos ou adicione um novo.</p>
         </div>
 
-        
+        {/* Barra de Busca e Botão Novo Livro */}
         <div className="flex flex-col sm:flex-row items-center gap-4 mb-10">
           <input
             type="text"
@@ -85,29 +88,21 @@ export default function Home() {
           </button>
         </div>
 
-       
+        {/* Grid de Livros */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           
           {filteredBooks.map((book) => (
-            <div
+            <BookCard
               key={book.id}
+              title={book.title}
+              author={book.author}
+              cover_url={book.cover_url}
+              snippetsCount={book.snippetsCount}
               onClick={() => navigate(`/books/${book.id}`)}
-              className="bg-white/70 backdrop-blur-sm border border-tinta/10 rounded-3xl p-5 flex flex-col justify-between hover:border-indigo/40 hover:shadow-md transition-all cursor-pointer group"
-            >
-              <div className="bg-[#F7D6C8] h-32 rounded-2xl mb-4 shadow-inner border border-black/5" />
-              <div>
-                <h3 className="font-serif font-medium text-tinta text-base group-hover:text-indigo transition-colors line-clamp-1">
-                  {book.title}
-                </h3>
-                <p className="text-xs text-tinta/70 mb-3 line-clamp-1">{book.author}</p>
-                <span className="text-[11px] text-tinta/50 font-medium bg-tinta/5 px-2.5 py-1 rounded-full">
-                  {book.snippetsCount || 0} trechos
-                </span>
-              </div>
-            </div>
+            />
           ))}
 
-         
+          {/* Card Interativo de Cadastrar Livro */}
           <div
             onClick={() => setIsModalOpen(true)}
             className="border-2 border-dashed border-tinta/20 rounded-3xl p-5 flex flex-col items-center justify-center text-center min-h-[220px] hover:border-indigo hover:bg-white/40 transition-all cursor-pointer group"
@@ -123,7 +118,7 @@ export default function Home() {
         </div>
       </main>
 
-      
+      {/* MODAL DE CADASTRAR LIVRO */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
           <div className="bg-white border border-tinta/10 rounded-3xl p-7 max-w-md w-full shadow-xl animate-in fade-in zoom-in-95 duration-150">
@@ -136,7 +131,7 @@ export default function Home() {
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Memórias Póstumas de Brás Cubas"
+                  placeholder="Ex: Dom Casmurro"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-sm bg-papel/50 border border-tinta/20 rounded-xl outline-none focus:border-indigo"
@@ -151,6 +146,19 @@ export default function Home() {
                   placeholder="Ex: Machado de Assis"
                   value={newAuthor}
                   onChange={(e) => setNewAuthor(e.target.value)}
+                  className="w-full px-3.5 py-2.5 text-sm bg-papel/50 border border-tinta/20 rounded-xl outline-none focus:border-indigo"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-medium text-tinta/80 mb-1">
+                  URL da Capa <span className="text-tinta/40 font-normal">(opcional)</span>
+                </label>
+                <input
+                  type="url"
+                  placeholder="https://exemplo.com/capa.jpg"
+                  value={newCoverUrl}
+                  onChange={(e) => setNewCoverUrl(e.target.value)}
                   className="w-full px-3.5 py-2.5 text-sm bg-papel/50 border border-tinta/20 rounded-xl outline-none focus:border-indigo"
                 />
               </div>
