@@ -40,7 +40,7 @@ class User {
             const isPasswordValid = await bcrypt.compare(userPassword, user.password_hash);
             
           
-            console.log("Hash:", user?.password_hash);
+            
             if (!isPasswordValid) {
                 throw new AppError("Email ou Senha inválidos!", 401);
             }
@@ -55,6 +55,22 @@ class User {
              throw error; 
         }
     }
+
+        static async findById(id){
+        try {
+            const sql = `SELECT id, name, email, avatar_url, created_at FROM users WHERE id = ?`;
+            const [rows] = await db.execute(sql, [id]);
+
+            if(rows.length === 0){
+                throw new AppError("Usuário não encontrado", 404);
+            }
+
+            return rows[0];
+        } catch (error) {
+            throw error;
+        }
+    }
+
     
     static async findByName(name){
         try {
